@@ -12,7 +12,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Properties;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,22 +32,19 @@ public class ChargerStatusService {
   private final RestTemplate restTemplate;
   private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private ResponseObject activeResponseObject = null;
-  @Getter
-  @Setter
-  private boolean sendEmail = false;
-  @Getter
-  @Setter
-  private boolean makeCall = false;
+  @Getter @Setter private boolean sendEmail = false;
+  @Getter @Setter private boolean makeCall = false;
 
   @Scheduled(cron = "0 0/1 * * * ?")
   @EventListener(ApplicationStartedEvent.class)
   public void checkStatus() throws JsonProcessingException, URISyntaxException {
+    boolean change = false;
     ResponseObject response =
         restTemplate.getForObject(
             "https://charge.pod-point.com/ajax/pods/1545", ResponseObject.class);
     log.info("Object: {}", OBJECT_MAPPER.writeValueAsString(response));
     if (!Objects.equals(response, activeResponseObject) && this.sendEmail) {
-      activeResponseObject = response;
+      change = true;
       String to = "ineagu01@mail.bbk.ac.uk";
       String from = "neagu_ionutalin@icloud.com";
       String password = "nomr-vulh-jlcj-mxsp";
@@ -92,7 +88,7 @@ public class ChargerStatusService {
       }
     }
     if (!Objects.equals(response, activeResponseObject) && this.makeCall) {
-      activeResponseObject = response;
+      change = true;
       Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
       Call call =
           Call.creator(
@@ -102,6 +98,6 @@ public class ChargerStatusService {
               .create();
       log.info("Call made: {}", call.getStatus());
     }
+    if (change) activeResponseObject = response;
   }
-
 }
