@@ -1,6 +1,7 @@
 package org.alin.chargerhertsmere;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +26,7 @@ public class ChargerStatusController {
     else chargerStatusService.setSendEmail(true);
   }
 
-  @GetMapping(path = "/api")
+  @GetMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
   public SwiftObject getCall() {
     return SwiftObject.builder()
         .email(chargerStatusService.isSendEmail())
