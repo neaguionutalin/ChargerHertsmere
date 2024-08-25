@@ -2,14 +2,20 @@ package org.alin.chargerhertsmere;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Call;
+import com.twilio.type.PhoneNumber;
 import jakarta.mail.*;
-
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Properties;
 
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
@@ -22,18 +28,26 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class ChargerStatusService {
 
+  private static final String ACCOUNT_SID = "ACd9da66e6d9a951a280ee9bd384595fff";
+  private static final String AUTH_TOKEN = "f0d6717cb323bd36aa4f9c70cf1fcb6e";
   private final RestTemplate restTemplate;
   private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private ResponseObject activeResponseObject = null;
+  @Getter
+  @Setter
+  private boolean sendEmail = false;
+  @Getter
+  @Setter
+  private boolean makeCall = false;
 
   @Scheduled(cron = "0 0/1 * * * ?")
   @EventListener(ApplicationStartedEvent.class)
-  public void checkStatus() throws JsonProcessingException {
+  public void checkStatus() throws JsonProcessingException, URISyntaxException {
     ResponseObject response =
         restTemplate.getForObject(
             "https://charge.pod-point.com/ajax/pods/1545", ResponseObject.class);
     log.info("Object: {}", OBJECT_MAPPER.writeValueAsString(response));
-    if (!Objects.equals(response, activeResponseObject)) {
+    if (!Objects.equals(response, activeResponseObject) && this.sendEmail) {
       activeResponseObject = response;
       String to = "ineagu01@mail.bbk.ac.uk";
       String from = "neagu_ionutalin@icloud.com";
@@ -62,7 +76,11 @@ public class ChargerStatusService {
         // Set To: header field of the header.
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
         // Set Subject: header field
-        message.setSubject(String.format("Charge A %s, Charger B %s", response.getPods().get(0).getStatuses().get(0).getLabel(), response.getPods().get(0).getStatuses().get(1).getLabel()));
+        message.setSubject(
+            String.format(
+                "Charge A %s, Charger B %s",
+                response.getPods().get(0).getStatuses().get(0).getLabel(),
+                response.getPods().get(0).getStatuses().get(1).getLabel()));
         // Now set the actual message
         message.setText(OBJECT_MAPPER.writeValueAsString(response));
         System.out.println("sending...");
@@ -73,5 +91,17 @@ public class ChargerStatusService {
         mex.printStackTrace();
       }
     }
+    if (!Objects.equals(response, activeResponseObject) && this.makeCall) {
+      activeResponseObject = response;
+      Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+      Call call =
+          Call.creator(
+                  new PhoneNumber("+447490927845"),
+                  new PhoneNumber("+447588667442"),
+                  new URI("http://demo.twilio.com/docs/voice.xml"))
+              .create();
+      log.info("Call made: {}", call.getStatus());
+    }
   }
+
 }
