@@ -9,30 +9,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ChargerStatusController {
 
-    private final ChargerStatusService chargerStatusService;
+  private final ChargerStatusService chargerStatusService;
 
-    @PutMapping(path = "/api/call")
-    public void handleCall() {
-        boolean status = chargerStatusService.isMakeCall();
-        if (status) chargerStatusService.setMakeCall(false);
-        else chargerStatusService.setMakeCall(true);
-    }
+  @PutMapping(path = "/api/call")
+  public void handleCall() {
+    boolean status = chargerStatusService.isMakeCall();
+    if (status) chargerStatusService.setMakeCall(false);
+    else chargerStatusService.setMakeCall(true);
+  }
 
-    @PutMapping(path = "/api/email")
-    public void handleEmail() {
-        boolean status = chargerStatusService.isSendEmail();
-        if (status) chargerStatusService.setSendEmail(false);
-        else chargerStatusService.setSendEmail(true);
-    }
+  @PutMapping(path = "/api/email")
+  public void handleEmail() {
+    boolean status = chargerStatusService.isSendEmail();
+    if (status) chargerStatusService.setSendEmail(false);
+    else chargerStatusService.setSendEmail(true);
+  }
 
-    @GetMapping(path = "/api/call")
-    public boolean getCall() {
-        return chargerStatusService.isMakeCall();
-    }
-
-
-    @GetMapping(path = "/api/email")
-    public boolean getEmail() {
-        return chargerStatusService.isSendEmail();
-    }
+  @GetMapping(path = "/api")
+  public SwiftObject getCall() {
+    return SwiftObject.builder()
+        .email(chargerStatusService.isSendEmail())
+        .phone(chargerStatusService.isMakeCall())
+        .build();
+  }
 }
