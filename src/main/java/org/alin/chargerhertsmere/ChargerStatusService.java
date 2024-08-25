@@ -28,12 +28,12 @@ import org.springframework.web.client.RestTemplate;
 public class ChargerStatusService {
 
   private static final String ACCOUNT_SID = "ACd9da66e6d9a951a280ee9bd384595fff";
-  private static final String AUTH_TOKEN = "f0d6717cb323bd36aa4f9c70cf1fcb6e";
+  private static final String AUTH_TOKEN = "7d318f4113ab9d7e6a6c5b0281237411";
   private final RestTemplate restTemplate;
   private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private ResponseObject activeResponseObject = null;
   @Getter @Setter private boolean sendEmail = false;
-  @Getter @Setter private boolean makeCall = false;
+  @Getter @Setter private boolean makeCall = true;
 
   @Scheduled(cron = "0 0/1 * * * ?")
   @EventListener(ApplicationStartedEvent.class)
