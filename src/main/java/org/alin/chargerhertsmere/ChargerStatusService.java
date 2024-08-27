@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,7 +29,12 @@ import org.springframework.web.client.RestTemplate;
 public class ChargerStatusService {
 
   private static final String ACCOUNT_SID = "ACd9da66e6d9a951a280ee9bd384595fff";
-  private static final String AUTH_TOKEN = "7d318f4113ab9d7e6a6c5b0281237411";
+
+  @Value("${AUTH_TOKEN}")
+  private String AUTH_TOKEN;
+  @Value("${EMAIL_PASSWORD}")
+  private String EMAIL_TOKEN;
+
   private final RestTemplate restTemplate;
   private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private ResponseObject activeResponseObject = null;
@@ -47,7 +53,6 @@ public class ChargerStatusService {
       change = true;
       String to = "ineagu01@mail.bbk.ac.uk";
       String from = "neagu_ionutalin@icloud.com";
-      String password = "nomr-vulh-jlcj-mxsp";
       String host = "smtp.mail.me.com";
       Properties properties = System.getProperties();
 
@@ -61,7 +66,7 @@ public class ChargerStatusService {
               properties,
               new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                  return new PasswordAuthentication(from, password);
+                  return new PasswordAuthentication(from, EMAIL_TOKEN);
                 }
               });
       try {
