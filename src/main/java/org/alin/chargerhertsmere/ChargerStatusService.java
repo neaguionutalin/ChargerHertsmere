@@ -30,9 +30,9 @@ public class ChargerStatusService {
 
   private static final String ACCOUNT_SID = "ACd9da66e6d9a951a280ee9bd384595fff";
 
-  @Value("${AUTH_TOKEN}")
+  @Value("${app.auth_token}")
   private String AUTH_TOKEN;
-  @Value("${EMAIL_PASSWORD}")
+  @Value("${app.email_password}")
   private String EMAIL_TOKEN;
 
   private final RestTemplate restTemplate;
