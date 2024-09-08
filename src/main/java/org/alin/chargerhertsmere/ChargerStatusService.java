@@ -38,8 +38,8 @@ public class ChargerStatusService {
   private final RestTemplate restTemplate;
   private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private ResponseObject activeResponseObject = null;
-  @Getter @Setter private boolean sendEmail = true;
-  @Getter @Setter private boolean makeCall = true;
+  @Getter @Setter private boolean sendEmail = false;
+  @Getter @Setter private boolean makeCall = false;
 
   @Scheduled(cron = "0 0/1 * * * ?")
   @EventListener(ApplicationStartedEvent.class)
