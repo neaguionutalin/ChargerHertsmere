@@ -38,8 +38,20 @@ public class ChargerStatusService {
   private final RestTemplate restTemplate;
   private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private ResponseObject activeResponseObject = null;
-  @Getter @Setter private boolean sendEmail = false;
   @Getter @Setter private boolean makeCall = false;
+
+  public boolean changeStatus() {
+    this.makeCall = !this.makeCall;
+    Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+    com.twilio.rest.api.v2010.account.Message message =
+        com.twilio.rest.api.v2010.account.Message.creator(
+                new com.twilio.type.PhoneNumber("+447490927845"),
+                new com.twilio.type.PhoneNumber("+447588667442"),
+                String.format("Phone is now %s.", this.makeCall? "on": "off"))
+            .create();
+    log.info("Changed Status: {}", message.getBody());
+    return this.makeCall;
+  }
 
   @Scheduled(cron = "0 0/1 * * * ?")
   @EventListener(ApplicationStartedEvent.class)
@@ -49,7 +61,7 @@ public class ChargerStatusService {
         restTemplate.getForObject(
             "https://charge.pod-point.com/ajax/pods/1545", ResponseObject.class);
     log.info("Object: {}", OBJECT_MAPPER.writeValueAsString(response));
-    if (!Objects.equals(response, activeResponseObject) && this.sendEmail) {
+    if (!Objects.equals(response, activeResponseObject) && this.makeCall) {
       change = true;
       String to = "ineagu01@mail.bbk.ac.uk";
       String from = "neagu_ionutalin@icloud.com";
