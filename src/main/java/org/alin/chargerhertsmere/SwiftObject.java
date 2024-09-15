@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SwiftObject {
 
-    private boolean email;
     private boolean phone;
 }
