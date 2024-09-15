@@ -19,12 +19,18 @@ public class ChargerStatusController {
   public SwiftObject handleCall() {
     boolean status = chargerStatusService.isMakeCall();
     chargerStatusService.setMakeCall(!status);
-    return SwiftObject.builder().phone(!status).build();
+    return SwiftObject.builder()
+        .phone(!status)
+        .responseObject(chargerStatusService.getActiveResponseObject())
+        .build();
   }
 
   @GetMapping(path = "/api/call", produces = MediaType.APPLICATION_JSON_VALUE)
   public SwiftObject getObject() {
-    return SwiftObject.builder().phone(chargerStatusService.isMakeCall()).build();
+    return SwiftObject.builder()
+        .phone(chargerStatusService.isMakeCall())
+        .responseObject(chargerStatusService.getActiveResponseObject())
+        .build();
   }
 
   @PostMapping(value = "/sms", produces = MediaType.APPLICATION_XML_VALUE)

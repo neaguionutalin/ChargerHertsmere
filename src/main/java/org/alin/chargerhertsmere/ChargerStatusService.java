@@ -37,7 +37,7 @@ public class ChargerStatusService {
 
   private final RestTemplate restTemplate;
   private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-  private ResponseObject activeResponseObject = null;
+  @Getter private ResponseObject activeResponseObject = null;
   @Getter @Setter private boolean makeCall = false;
 
   public boolean changeStatus() {
@@ -96,10 +96,10 @@ public class ChargerStatusService {
                 response.getPods().get(0).getStatuses().get(1).getLabel()));
         // Now set the actual message
         message.setText(OBJECT_MAPPER.writeValueAsString(response));
-        System.out.println("sending...");
+        log.info("sending...");
         // Send message
         Transport.send(message);
-        System.out.println("Sent message successfully....");
+        log.info("Sent message successfully....");
       } catch (MessagingException mex) {
         mex.printStackTrace();
       }

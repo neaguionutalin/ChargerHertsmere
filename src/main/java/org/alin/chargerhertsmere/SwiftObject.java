@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class SwiftObject {
 
     private boolean phone;
+    private ResponseObject responseObject;
 }
