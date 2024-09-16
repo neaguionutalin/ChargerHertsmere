@@ -56,13 +56,11 @@ public class ChargerStatusService {
   @Scheduled(cron = "0 0/1 * * * ?")
   @EventListener(ApplicationStartedEvent.class)
   public void checkStatus() throws JsonProcessingException, URISyntaxException {
-    boolean change = false;
     ResponseObject response =
         restTemplate.getForObject(
             "https://charge.pod-point.com/ajax/pods/1545", ResponseObject.class);
     log.info("Object: {}", OBJECT_MAPPER.writeValueAsString(response));
     if (!Objects.equals(response, activeResponseObject) && this.makeCall) {
-      change = true;
       String to = "ineagu01@mail.bbk.ac.uk";
       String from = "neagu_ionutalin@icloud.com";
       String host = "smtp.mail.me.com";
@@ -103,9 +101,6 @@ public class ChargerStatusService {
       } catch (MessagingException mex) {
         mex.printStackTrace();
       }
-    }
-    if (!Objects.equals(response, activeResponseObject) && this.makeCall) {
-      change = true;
       Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
       Call call =
           Call.creator(
@@ -115,6 +110,6 @@ public class ChargerStatusService {
               .create();
       log.info("Call made: {}", call.getStatus());
     }
-    if (change) activeResponseObject = response;
+    activeResponseObject = response;
   }
 }
