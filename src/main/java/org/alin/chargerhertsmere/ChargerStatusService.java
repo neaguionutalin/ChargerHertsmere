@@ -59,7 +59,6 @@ public class ChargerStatusService {
     ResponseObject response =
         restTemplate.getForObject(
             "https://charge.pod-point.com/ajax/pods/1545", ResponseObject.class);
-    log.info("Object: {}", OBJECT_MAPPER.writeValueAsString(response));
     if (!Objects.equals(response, activeResponseObject) && this.makeCall) {
       String to = "ineagu01@mail.bbk.ac.uk";
       String from = "neagu_ionutalin@icloud.com";
