@@ -28,6 +28,6 @@ public class HistoryService {
     for (int i = 1; i < QUEUE_SIZE; i++) {
       queue.set(i - 1, queue.get(i));
     }
-    queue.remove(queue.get(QUEUE_SIZE));
+    queue.remove(queue.get(QUEUE_SIZE-1));
   }
 }
