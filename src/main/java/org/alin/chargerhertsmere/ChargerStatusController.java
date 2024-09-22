@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class ChargerStatusController {
 
   private final ChargerStatusService chargerStatusService;
+  private final HistoryService historyService;
 
   @PutMapping(path = "/api/call", produces = MediaType.APPLICATION_JSON_VALUE)
   public SwiftObject handleCall() {
@@ -22,6 +23,7 @@ public class ChargerStatusController {
     return SwiftObject.builder()
         .phone(!status)
         .responseObject(chargerStatusService.getActiveResponseObject())
+        .statuses(historyService.getQueue())
         .build();
   }
 
@@ -30,6 +32,7 @@ public class ChargerStatusController {
     return SwiftObject.builder()
         .phone(chargerStatusService.isMakeCall())
         .responseObject(chargerStatusService.getActiveResponseObject())
+        .statuses(historyService.getQueue())
         .build();
   }
 

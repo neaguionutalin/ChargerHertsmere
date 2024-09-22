@@ -36,6 +36,7 @@ public class ChargerStatusService {
   private String EMAIL_TOKEN;
 
   private final RestTemplate restTemplate;
+  private final HistoryService historyService;
   private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   @Getter private ResponseObject activeResponseObject = null;
   @Getter @Setter private boolean makeCall = false;
@@ -59,6 +60,7 @@ public class ChargerStatusService {
     ResponseObject response =
         restTemplate.getForObject(
             "https://charge.pod-point.com/ajax/pods/1545", ResponseObject.class);
+    if (!Objects.equals(response, activeResponseObject)) historyService.addEntry(response);
     if (!Objects.equals(response, activeResponseObject) && this.makeCall) {
       String to = "ineagu01@mail.bbk.ac.uk";
       String from = "neagu_ionutalin@icloud.com";
