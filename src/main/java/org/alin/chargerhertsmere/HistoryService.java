@@ -17,9 +17,9 @@ public class HistoryService {
     public void addEntry(ResponseObject responseObject) {
         if (queue.size() == QUEUE_SIZE) shiftQueueElements();
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(String.format("Time: %s. ", Instant.now()));
+        stringBuilder.append(String.format("Time: %s. %n", Instant.now()));
         for (int i = 0; i < responseObject.getPods().size(); i++) {
-            stringBuilder.append(String.format("%s - %s, %s - %s. %n", responseObject.getPods().get(i).getStatuses().get(0).getDoorId(),
+            stringBuilder.append(String.format("%s - %s, %s - %s. ", responseObject.getPods().get(i).getStatuses().get(0).getDoorId(),
                     responseObject.getPods().get(i).getStatuses().get(0).getLabel().charAt(0),
                     responseObject.getPods().get(i).getStatuses().get(1).getDoorId(),
                     responseObject.getPods().get(i).getStatuses().get(1).getLabel().charAt(0)));
