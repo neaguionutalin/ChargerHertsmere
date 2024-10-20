@@ -24,14 +24,14 @@ public class ResponseObject {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Pod implements Comparator<Pod> {
+    public static class Pod implements Comparable<Pod> {
 
         private int id;
         private List<Status> statuses;
 
         @Override
-        public int compare(Pod o1, Pod o2) {
-            return o1 != null && o2 != null ? o1.id < o2.id ? 1 : -1 : 0;
+        public int compareTo(Pod o) {
+            return Integer.compare(this.id, o.id);
         }
 
         @Data
@@ -39,15 +39,15 @@ public class ResponseObject {
         @AllArgsConstructor
         @NoArgsConstructor
         @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class Status implements Comparator<Status> {
+        public static class Status implements Comparable<Status> {
             @JsonProperty("door_id")
             private Integer doorId;
             private String label;
             private ActiveCharge activeCharge;
 
             @Override
-            public int compare(Status o1, Status o2) {
-                return o1 != null && o2 != null ? o1.doorId < o2.doorId ? 1 : -1 : 0;
+            public int compareTo(Status o) {
+                return this.doorId.compareTo(o.doorId);
             }
 
             @Data
